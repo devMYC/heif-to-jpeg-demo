@@ -1,3 +1,5 @@
+# The demo uses [libheif](https://github.com/strukturag/libheif/blob/gh-pages/libheif.js)
+
 # Run the demo
 
 - Make sure [Node.js](https://nodejs.org/en/) is available
