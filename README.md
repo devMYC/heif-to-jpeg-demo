@@ -15,6 +15,7 @@ $ node demo.js
 ### Web demo
 
 ```bash
+$ yarn  # or npm install
 $ node server.js  # default port 8000, or use PORT environment variable to specify a different port.
 ```
 

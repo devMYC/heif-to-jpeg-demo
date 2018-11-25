@@ -1,0 +1,11 @@
+{
+  "name": "heif-to-jpeg-demo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/devMYC/heif-to-jpeg-demo.git",
+  "author": "Martin <mycha0@hotmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "canvas": "^1.6.13"
+  }
+}
