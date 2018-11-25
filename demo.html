@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HEIF to JPEG</title>
+  <script type="text/javascript" src="./libheif.js"></script>
+</head>
+<body>
+  <input id="file-selector" type="file" />
+  <canvas id="canvas"></canvas>
+
+  <script type="text/javascript">
+    /* eslint-disable indent,no-console,no-undef */
+    document.getElementById('file-selector').addEventListener('change', function () {
+      const [ file ] = this.files
+      if ( !file ) return
+
+      const reader = new FileReader()
+      reader.onerror = evt => console.error('Failed to read file', evt)
+      reader.onload = evt => {
+        const buf = evt.target.result
+        const decoder = new libheif.HeifDecoder()
+        const [ image ] = decoder.decode( new Uint8Array(buf, 0, buf.byteLength) )
+
+        console.time('get image resolution')
+        const w = image.get_width()
+        const h = image.get_height()
+        console.log(`w:${w} h:${h}`)
+        console.timeEnd('get image resolution')
+
+        const canvas = document.getElementById('canvas')
+        canvas.width = w
+        canvas.height = h
+        const ctx = canvas.getContext('2d')
+        const imageData = ctx.createImageData(w, h)
+
+        image.display(imageData, dispayData => {
+          ctx.putImageData(dispayData, 0, 0)
+          canvas.toDataURL('image/jpeg', (err, dataURL) => {
+            if (err) return console.error('Failed to generate dataURL', err)
+            canvas.src = dataURL
+          })
+        })
+      }
+
+      reader.readAsArrayBuffer(file)
+    }, false)
+    /* eslint-enable indent,no-console,no-undef */
+  </script>
+</body>
+</html>
