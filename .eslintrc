@@ -1,0 +1,28 @@
+{
+  "env": {
+    "es6": true,
+    "node": true,
+    "browser": true
+  },
+  "extends": [
+    "eslint:recommended"
+  ],
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    }
+  },
+  "plugins": [],
+  "rules": {
+    "comma-style": [ "warn", "first", { "exceptions": { "ArrayExpression": true, "ObjectExpression": true } } ],
+    "indent": [ "error", 2, { "SwitchCase": 0 } ],
+    "no-empty": "warn",
+    "no-unused-vars": [ "warn", { "vars": "all", "varsIgnorePattern": "^_+?$", "args": "all", "argsIgnorePattern": "^_+?$" } ],
+    "quote-props": [ "error", "as-needed", { "keywords": false, "numbers": true } ],
+    "quotes": [ "warn", "single" ],
+    "semi": [ "warn", "never" ]
+  }
+}

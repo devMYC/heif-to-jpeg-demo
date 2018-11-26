@@ -24,15 +24,15 @@ function handler (req, res) {
   }
 
   switch ( req.url ) {
-    case '/demo.html':
-    case '/libheif.js':
-      return createReadStream( join(__dirname, basename(req.url)) ).pipe(res)
+  case '/demo.html':
+  case '/libheif.js':
+    return createReadStream( join(__dirname, basename(req.url)) ).pipe(res)
 
-    default:
-      msg = 'Page Not Found.'
-      res.statusCode = 404
-      res.setHeader('Content-Type', 'text/plain')
-      res.setHeader('Content-Length', Buffer.byteLength(msg))
-      return res.end(msg)
+  default:
+    msg = 'Page Not Found.'
+    res.statusCode = 404
+    res.setHeader('Content-Type', 'text/plain')
+    res.setHeader('Content-Length', Buffer.byteLength(msg))
+    return res.end(msg)
   }
 }
