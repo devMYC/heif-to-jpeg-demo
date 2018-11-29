@@ -32,7 +32,7 @@ $ node express-demo.js  # default port 8000, or use PORT environment variable to
 In a new terminal window
 
 ```bash
-$ curl -X POST http://localhost:<port>/img/upload -F file=@somefile.ext
+$ curl http://localhost:<port>/img/upload -F file=@somefile.ext
 ```
 
 To view the uploaded image, copy the `file_name` returned and send a GET request to `http://localhost:<port>/img/<file_name>` in your browser.
