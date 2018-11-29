@@ -6,6 +6,8 @@
   "author": "Martin <mycha0@hotmail.com>",
   "license": "MIT",
   "dependencies": {
-    "canvas": "^1.6.13"
+    "canvas": "^1.6.13",
+    "express": "^4.16.4",
+    "multer": "^1.4.1"
   }
 }
