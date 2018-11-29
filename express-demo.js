@@ -23,33 +23,31 @@ class ImageStorage {
       if (err) return cb(err)
 
       const skipDecode = file.mimetype.startsWith('image/')
-      if ( !skipDecode ) {
-        const decoder = new libheif.HeifDecoder()
-        const buf = []
-        let length = 0
-        return file.stream
-          .on('error', cb)
-          .on('end', _ => {
-            const [ image ] = decoder.decode( new Uint8Array(Buffer.concat(buf, length)) )
-            const w = image.get_width()
-            const h = image.get_height()
+      if ( skipDecode ) return this._saveFile(file, { path, skipDecode }, cb)
 
-            const canvas = new Canvas(w, h)
-            const ctx = canvas.getContext('2d')
-            const imageData = ctx.createImageData(w, h)
+      const buf = []
+      let length = 0
+      file.stream
+        .on('error', cb)
+        .on('end', _ => {
+          const decoder = new libheif.HeifDecoder()
+          const [ image ] = decoder.decode( new Uint8Array(Buffer.concat(buf, length)) )
+          const w = image.get_width()
+          const h = image.get_height()
 
-            image.display(imageData, displayData => {
-              ctx.putImageData(displayData, 0, 0)
-              this._saveFile(file, { jpegStream: canvas.jpegStream(), path, skipDecode }, cb)
-            })
+          const canvas = new Canvas(w, h)
+          const ctx = canvas.getContext('2d')
+          const imageData = ctx.createImageData(w, h)
+
+          image.display(imageData, displayData => {
+            ctx.putImageData(displayData, 0, 0)
+            this._saveFile(file, { jpegStream: canvas.jpegStream(), path, skipDecode }, cb)
           })
-          .on('data', chunk => {
-            length += chunk.length
-            buf.push(chunk)
-          })
-      }
-
-      this._saveFile(file, { path, skipDecode }, cb)
+        })
+        .on('data', chunk => {
+          length += chunk.length
+          buf.push(chunk)
+        })
     })
   }
 
@@ -68,7 +66,7 @@ class ImageStorage {
     const passHash = new PassThrough()
     const passWriter = new PassThrough()
 
-    ;(jpegStream || file.stream)
+    ;( jpegStream || file.stream )
       .on('end', _ => {
         passHash.pipe(hash, { end: false })
         passHash
@@ -93,6 +91,7 @@ class ImageStorage {
               .end()
           }))
           .end()
+
       })
       .on('data', chunk => {
         passHash.write(chunk)
@@ -119,7 +118,12 @@ express()
     createReadStream(join(__dirname, req.params.fileName)).on('error', next).pipe(res)
   })
   .post('/img/upload', upload.single('file'), (req, res, next) => {
-    if( !req.file ) return next( new Error('Unsupported file format.') )
+    if( !req.file ) return next( new Error('Unsupported File Format.') )
     res.json({ ok: true, file_name: basename(req.file.path) })
+  })
+  .use((_, __, next) => next(new Error('Page Not Found')))
+  .use((err, req, res, _) => {
+    console.error('> %s\n', req.originalUrl, err && err.stack || err)
+    res.json({ ok: false, msg: err.message })
   })
   .listen(PORT, _ => console.log('> Server listening on port %d', PORT))
