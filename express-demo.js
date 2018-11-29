@@ -1,12 +1,12 @@
 'use strict' /* eslint-disable no-console */
 
 const { createHash } = require('crypto')
-const { createReadStream, unlink, createWriteStream } = require('fs')
+const { createReadStream, createWriteStream, unlink } = require('fs')
 const { basename, join } = require('path')
 const { PassThrough } = require('stream')
+const Canvas = require('canvas')
 const express = require('express')
 const multer = require('multer')
-const Canvas = require('canvas')
 const libheif = require('./libheif')
 
 const PORT = process.env.PORT
@@ -23,7 +23,7 @@ class ImageStorage {
       if (err) return cb(err)
 
       const skipDecode = file.mimetype.startsWith('image/')
-      if ( skipDecode ) return this._saveFile(file, { path, skipDecode }, cb)
+      if ( skipDecode ) return this._saveFile({ file, path, skipDecode }, cb)
 
       const buf = []
       let length = 0
@@ -41,7 +41,7 @@ class ImageStorage {
 
           image.display(imageData, displayData => {
             ctx.putImageData(displayData, 0, 0)
-            this._saveFile(file, { jpegStream: canvas.jpegStream(), path, skipDecode }, cb)
+            this._saveFile({ file, jpegStream: canvas.jpegStream(), path, skipDecode }, cb)
           })
         })
         .on('data', chunk => {
@@ -55,7 +55,7 @@ class ImageStorage {
     unlink(file.path, cb)
   }
 
-  _saveFile(file, { jpegStream, path, skipDecode }, cb) {
+  _saveFile({ file, jpegStream, path, skipDecode }, cb) {
     const [ ext='' ] = file.originalname.match(/\.[^.]+?$/) || []
     let fileName = file.originalname.slice(0, ext ? -1 * ext.length : undefined)
 
@@ -91,7 +91,6 @@ class ImageStorage {
               .end()
           }))
           .end()
-
       })
       .on('data', chunk => {
         passHash.write(chunk)
