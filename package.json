@@ -7,7 +7,7 @@
   "license": "MIT",
   "dependencies": {
     "canvas": "^1.6.13",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "multer": "^1.4.1"
   }
 }
